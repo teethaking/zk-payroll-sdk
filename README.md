@@ -227,6 +227,44 @@ typed `WithholdingConfigError` when a hard gate is needed, and
 `PayrollService.validateWithholdingConfig()` exposes the same check as an
 instance and static helper.
 
+## Audit Grant Scope Reader
+
+Read the **effective** audit access scope for an auditor, not just the scope that was last written to disk (`#497`). Auditors accumulate grants over time — a `read-only` window, a later `full-audit` grant, one that quietly expired, one an admin revoked. `readEffectiveAuditGrantScope()` folds every grant into one typed answer so a payroll workflow never hands departmental breakdowns to a stale grant, and never blocks a legitimate auditor because it read the wrong record.
+
+- **Fail-Closed Scope Resolution**: Reports the widest scope among grants that are **live** at the reference time — a lapsed `full-audit` grant can never widen current access, and `scope` is `null` when nothing is live.
+- **Typed Lifecycle State**: Per-grant `"active" | "expired" | "revoked"` plus an effective `"active" | "expired" | "revoked" | "none"` state, with expiry ranked above revocation so a lapsed grant stays recoverable.
+- **Privacy Guaranteed**: The report is metadata-only — view-key tokens, secret keys, salaries, and employee records are never copied through, and unknown fields on the source record are dropped. Every message masks addresses (`GBS***JHR`) and is safe to log verbatim.
+- **Actionable Errors**: Coded `ValidationError`s (`AUDIT_GRANT_SCOPE_INVALID`, `AUDIT_GRANT_LIFECYCLE_INVALID`, …) name the offending field path without echoing payloads or payroll values.
+
+```typescript
+import {
+  readEffectiveAuditGrantScope,
+  auditScopeSatisfies,
+} from "@zk-payroll/core";
+
+const report = readEffectiveAuditGrantScope(persistedGrants);
+
+if (!report.allGranteesActive) {
+  // Privacy-safe: grantee addresses are masked.
+  console.warn(report.message);
+  // e.g. "1 of 2 grantee(s) have no live audit access: GBS***JHR"
+}
+
+for (const entry of report.grantees) {
+  console.log(entry.redactedGrantee, entry.scope, entry.state);
+  // e.g. "GBS***JHR" "read-only" "active"
+
+  // A null scope (lapsed or fully revoked) never satisfies a requirement.
+  if (!auditScopeSatisfies(entry.scope, "full-audit")) {
+    console.log(`Limited to ${entry.scope ?? "no access"} (${entry.state})`);
+    continue;
+  }
+
+  // Safe to include departmental breakdowns for this reviewer.
+  await buildSelectiveDisclosurePackage(entry.grants);
+}
+```
+
 ## Payroll Recipient Lock Status Reader
 
 Expose whether a payout recipient is locked because of an active payroll execution (`#512`). This strengthens operational workflows by preventing duplicate payouts, race conditions, and double-settlement during in-flight batch execution while keeping private salary and employee data protected.
@@ -1115,6 +1153,7 @@ For complete architectural patterns, threat models, and an incident response che
 - [Troubleshooting Guide](./docs/TROUBLESHOOTING.md) - Fixes for common install, build, and test failures
 - [API Reference](./docs/API.md) - Complete API documentation
 - [Pagination Helpers](./docs/pagination.md) - Cursor- and offset-based pagination for payroll history and audit records
+- [Audit Grant Scope Reader](./docs/audit-grant-scope.md) - Effective audit scope and lifecycle state for an auditor's grants
 - [Payroll UX Helpers](./docs/payroll-ux-helpers.md) - Configurable logging, completion polling, run summaries, and command serialization
 - [ZK Proof Generation](./docs/ZK_PROOF_GENERATION.md) - Detailed proof generation guide
 - [Examples](./examples/README.md) - Runnable examples and setup steps

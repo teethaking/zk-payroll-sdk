@@ -152,7 +152,26 @@ export * from "./employer-readiness";
 export * from "./proof-readiness";
 
 // ── Funding Source Readiness Check ──────────────────────────────────────────
-export * from "./funding-readiness";
+export * from "./funding";
+
+// ── Audit Grant Scope Reader ────────────────────────────────────────────────
+export type { ViewKeyScope } from "./audit/viewKeyHelpers";
+export {
+  AUDIT_GRANT_SCOPES,
+  readEffectiveAuditGrantScope,
+  resolveAuditGrantState,
+  selectWidestAuditScope,
+  auditScopeSatisfies,
+} from "./audit/grantScope";
+export type {
+  AuditGrantRecord,
+  AuditGrantScopeReport,
+  AuditGrantScopeErrorCode,
+  AuditGrantState,
+  AuditGrantLifecycleState,
+  EffectiveAuditGrant,
+  ResolvedAuditGrant,
+} from "./audit/grantScope";
 
 // ── Transaction Simulation ──────────────────────────────────────────────────
 export * from "./simulation";
