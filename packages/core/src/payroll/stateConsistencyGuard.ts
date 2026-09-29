@@ -12,7 +12,7 @@ import type { PayrollStatus as PayrollPeriodStatus } from "./types";
 export enum StateConsistencyErrorCode {
   /** The locally tracked status does not match the on-chain status. */
   STATUS_MISMATCH = "STATUS_MISMATCH",
-  /** The local version is ahead of the on-chain version. */
+  /** The locally tracked version is ahead of the on-chain version without permission. */
   STATE_MISMATCH = "STATE_MISMATCH",
   /** The locally tracked version is behind the on-chain version. */
   STALE_CLIENT = "STALE_CLIENT",

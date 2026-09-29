@@ -1,7 +1,4 @@
-import {
-  compilePayrollPolicy,
-  compilePayrollPolicyOrThrow,
-} from "../src/policy/compiler";
+import { compilePayrollPolicy, compilePayrollPolicyOrThrow } from "../src/policy/compiler";
 import {
   PolicyCompileError,
   PolicyCompileErrorCode,
@@ -17,9 +14,7 @@ const NOW = Date.parse("2026-09-15T12:00:00.000Z");
 const FUTURE_ISO = "2026-10-01T00:00:00.000Z";
 const LATER_ISO = "2027-10-01T00:00:00.000Z";
 
-function compileWithDates(
-  dates: Partial<Pick<PayrollPolicyInput, "effectiveDate" | "endDate">>
-) {
+function compileWithDates(dates: Partial<Pick<PayrollPolicyInput, "effectiveDate" | "endDate">>) {
   return compilePayrollPolicy({ ...MINIMAL_POLICY_FIXTURE, ...dates }, { now: NOW });
 }
 
@@ -99,7 +94,10 @@ describe("compilePayrollPolicy — effective-date failure paths", () => {
   });
 
   it("rejects an endDate before the effectiveDate", () => {
-    const result = compileWithDates({ effectiveDate: FUTURE_ISO, endDate: "2026-09-30T00:00:00.000Z" });
+    const result = compileWithDates({
+      effectiveDate: FUTURE_ISO,
+      endDate: "2026-09-30T00:00:00.000Z",
+    });
     const error = expectSingleDateError(result, "endDate");
     expect(error.message).toContain("must be after effectiveDate");
   });

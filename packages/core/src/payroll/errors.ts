@@ -19,7 +19,9 @@ export interface PayrollState {
   updatedAt?: number;
 }
 
-export const PAYROLL_STATE_TRANSITIONS: Readonly<Record<PayrollState["status"], readonly PayrollState["status"][]>> = {
+export const PAYROLL_STATE_TRANSITIONS: Readonly<
+  Record<PayrollState["status"], readonly PayrollState["status"][]>
+> = {
   PENDING: ["EXECUTING", "FAILED"],
   EXECUTING: ["COMPLETED", "FAILED"],
   COMPLETED: [],

@@ -8,5 +8,6 @@
  * - "cancelled": abandoned before settlement.
  */
 export type PayrollStatus = "draft" | "locked" | "settled" | "cancelled";
+export type PayrollPeriodStatus = PayrollStatus;
 
 export const EDITABLE_PAYROLL_STATUSES: readonly PayrollStatus[] = ["draft"];

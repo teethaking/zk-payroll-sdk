@@ -157,7 +157,10 @@ export function proposeRoleTransfer(
   now: number = Date.now()
 ): RoleTransferResult<RoleTransferRecord> {
   if (!isValidTimestamp(now)) {
-    return fail("invalid_window", "Transfer timestamps must be valid non-negative epoch milliseconds");
+    return fail(
+      "invalid_window",
+      "Transfer timestamps must be valid non-negative epoch milliseconds"
+    );
   }
   if (!isSignerRole(input.role)) {
     return fail("invalid_role", "The requested role is not transferable");
@@ -173,7 +176,12 @@ export function proposeRoleTransfer(
   }
 
   const windowMs = input.acceptanceWindowMs ?? DEFAULT_ACCEPTANCE_WINDOW_MS;
-  if (!Number.isSafeInteger(windowMs) || windowMs < MIN_ACCEPTANCE_WINDOW_MS || windowMs > MAX_ACCEPTANCE_WINDOW_MS || !Number.isSafeInteger(now + windowMs)) {
+  if (
+    !Number.isSafeInteger(windowMs) ||
+    windowMs < MIN_ACCEPTANCE_WINDOW_MS ||
+    windowMs > MAX_ACCEPTANCE_WINDOW_MS ||
+    !Number.isSafeInteger(now + windowMs)
+  ) {
     return fail(
       "invalid_window",
       `acceptanceWindowMs must be between ${MIN_ACCEPTANCE_WINDOW_MS} and ${MAX_ACCEPTANCE_WINDOW_MS} ms`

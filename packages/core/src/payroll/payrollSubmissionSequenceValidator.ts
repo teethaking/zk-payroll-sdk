@@ -252,11 +252,7 @@ export function validatePayrollSubmissionSequenceBatch(
   let outOfOrderCount = 0;
 
   for (let i = 0; i < entries.length; i++) {
-    const result = validatePayrollSubmissionSequence(
-      entries[i],
-      entries.slice(0, i),
-      options
-    );
+    const result = validatePayrollSubmissionSequence(entries[i], entries.slice(0, i), options);
 
     if (!result.isValid && result.violation) {
       violations.push(result.violation);
@@ -265,9 +261,8 @@ export function validatePayrollSubmissionSequenceBatch(
     }
   }
 
-  const expectedSequence = entries.length > 0
-    ? Array.from({ length: entries[0].totalBatches }, (_, i) => i + 1)
-    : [];
+  const expectedSequence =
+    entries.length > 0 ? Array.from({ length: entries[0].totalBatches }, (_, i) => i + 1) : [];
   const actualSequence = entries.map((e) => e.batchNumber);
 
   return {
@@ -288,9 +283,7 @@ export function validatePayrollSubmissionSequenceBatch(
 /**
  * Check if a set of submissions forms a complete sequence.
  */
-export function isSequenceComplete(
-  entries: PayrollSubmissionEntry[]
-): boolean {
+export function isSequenceComplete(entries: PayrollSubmissionEntry[]): boolean {
   if (entries.length === 0) return true;
 
   const firstEntry = entries[0];
@@ -298,13 +291,8 @@ export function isSequenceComplete(
     return false;
   }
 
-  const expected = new Set(
-    Array.from({ length: firstEntry.totalBatches }, (_, i) => i + 1)
-  );
+  const expected = new Set(Array.from({ length: firstEntry.totalBatches }, (_, i) => i + 1));
   const actual = new Set(entries.map((e) => e.batchNumber));
 
-  return (
-    expected.size === actual.size &&
-    Array.from(expected).every((b) => actual.has(b))
-  );
+  return expected.size === actual.size && Array.from(expected).every((b) => actual.has(b));
 }

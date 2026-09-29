@@ -46,6 +46,13 @@ export const ERROR_CODE_REGISTRY: Record<string, ErrorCodeEntry> = {
     suggestedMessage:
       "The provided parameters failed validation. Please review your inputs and try again.",
   },
+  PAYROLL_CALENDAR_OVERLAP: {
+    category: ErrorCategory.VALIDATION,
+    meaning: "Payroll calendar cycles overlap, contain collisions, or define inverted date ranges.",
+    retryable: false,
+    suggestedMessage:
+      "Payroll calendar cycles overlap or contain conflicting date intervals. Please review your period dates and try again.",
+  },
   CONFIG_VALIDATION_ERROR: {
     category: ErrorCategory.VALIDATION,
     meaning:

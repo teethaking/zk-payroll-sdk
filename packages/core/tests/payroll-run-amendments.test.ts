@@ -10,21 +10,45 @@ import {
 describe("Payroll Run Amendments Helper (#506)", () => {
   const AUTHORIZER = "GD6W57ZD55776SGYO5UXI5CYF334XCO45Z5L6ZOHU5X3L7UXE33B76EA";
   const BASE_COMMITMENTS: PayrollRunCommitment[] = [
-    { recipient: "G_ALICE_ADDR_111111111111111111111111111111111111111111111", amount: 5000n, asset: "USDC" },
-    { recipient: "G_BOB_ADDR_22222222222222222222222222222222222222222222222", amount: 4000n, asset: "USDC" },
-    { recipient: "G_CHARLIE_ADDR_3333333333333333333333333333333333333333333", amount: 3500n, asset: "XLM" },
+    {
+      recipient: "G_ALICE_ADDR_111111111111111111111111111111111111111111111",
+      amount: 5000n,
+      asset: "USDC",
+    },
+    {
+      recipient: "G_BOB_ADDR_22222222222222222222222222222222222222222222222",
+      amount: 4000n,
+      asset: "USDC",
+    },
+    {
+      recipient: "G_CHARLIE_ADDR_3333333333333333333333333333333333333333333",
+      amount: 3500n,
+      asset: "XLM",
+    },
   ];
 
   describe("createPayrollRunAmendment", () => {
     it("creates a canonical amendment record with calculated diffs and inspection summary", () => {
       const proposedCommitments: PayrollRunCommitment[] = [
         // Alice: modified amount
-        { recipient: "G_ALICE_ADDR_111111111111111111111111111111111111111111111", amount: 5500n, asset: "USDC" },
+        {
+          recipient: "G_ALICE_ADDR_111111111111111111111111111111111111111111111",
+          amount: 5500n,
+          asset: "USDC",
+        },
         // Bob: unchanged
-        { recipient: "G_BOB_ADDR_22222222222222222222222222222222222222222222222", amount: 4000n, asset: "USDC" },
+        {
+          recipient: "G_BOB_ADDR_22222222222222222222222222222222222222222222222",
+          amount: 4000n,
+          asset: "USDC",
+        },
         // Charlie: removed
         // David: added
-        { recipient: "G_DAVID_ADDR_444444444444444444444444444444444444444444444", amount: 2000n, asset: "USDC" },
+        {
+          recipient: "G_DAVID_ADDR_444444444444444444444444444444444444444444444",
+          amount: 2000n,
+          asset: "USDC",
+        },
       ];
 
       const input: CreatePayrollRunAmendmentInput = {
@@ -131,14 +155,20 @@ describe("Payroll Run Amendments Helper (#506)", () => {
         revision: 3,
         currentCommitments: BASE_COMMITMENTS,
         proposedCommitments: [
-          { recipient: "G_ALICE_ADDR_111111111111111111111111111111111111111111111", amount: 5000n, asset: "USDC" },
+          {
+            recipient: "G_ALICE_ADDR_111111111111111111111111111111111111111111111",
+            amount: 5000n,
+            asset: "USDC",
+          },
         ],
       });
 
       expect(summary.totalDiffs).toBe(2); // Charlie and Bob removed
       expect(summary.removedCount).toBe(2);
       expect(summary.riskLevel).toBe("medium");
-      expect(summary.warnings).toContain("Amendment includes recipient removals from the active payroll run.");
+      expect(summary.warnings).toContain(
+        "Amendment includes recipient removals from the active payroll run."
+      );
       expect(summary.redactedDescription).toContain("payroll pay...-99");
       expect(summary.redactedDescription).not.toContain("G_CHARLIE");
     });
@@ -153,9 +183,21 @@ describe("Payroll Run Amendments Helper (#506)", () => {
         reason: "annual_merit_increase",
         currentCommitments: BASE_COMMITMENTS,
         proposedCommitments: [
-          { recipient: "G_ALICE_ADDR_111111111111111111111111111111111111111111111", amount: 5200n, asset: "USDC" },
-          { recipient: "G_BOB_ADDR_22222222222222222222222222222222222222222222222", amount: 4000n, asset: "USDC" },
-          { recipient: "G_CHARLIE_ADDR_3333333333333333333333333333333333333333333", amount: 3500n, asset: "XLM" },
+          {
+            recipient: "G_ALICE_ADDR_111111111111111111111111111111111111111111111",
+            amount: 5200n,
+            asset: "USDC",
+          },
+          {
+            recipient: "G_BOB_ADDR_22222222222222222222222222222222222222222222222",
+            amount: 4000n,
+            asset: "USDC",
+          },
+          {
+            recipient: "G_CHARLIE_ADDR_3333333333333333333333333333333333333333333",
+            amount: 3500n,
+            asset: "XLM",
+          },
         ],
       });
 
@@ -172,8 +214,16 @@ describe("Payroll Run Amendments Helper (#506)", () => {
         authorizer: AUTHORIZER,
         currentCommitments: BASE_COMMITMENTS,
         proposedCommitments: [
-          { recipient: "G_ALICE_ADDR_111111111111111111111111111111111111111111111", amount: 5000n, asset: "USDC" },
-          { recipient: "G_ALICE_ADDR_111111111111111111111111111111111111111111111", amount: 1000n, asset: "USDC" },
+          {
+            recipient: "G_ALICE_ADDR_111111111111111111111111111111111111111111111",
+            amount: 5000n,
+            asset: "USDC",
+          },
+          {
+            recipient: "G_ALICE_ADDR_111111111111111111111111111111111111111111111",
+            amount: 1000n,
+            asset: "USDC",
+          },
         ],
       });
 
@@ -234,7 +284,11 @@ describe("Payroll Run Amendments Helper (#506)", () => {
         reason: "policy_update",
         currentCommitments: BASE_COMMITMENTS,
         proposedCommitments: [
-          { recipient: "G_ALICE_ADDR_111111111111111111111111111111111111111111111", amount: 5500n, asset: "USDC" },
+          {
+            recipient: "G_ALICE_ADDR_111111111111111111111111111111111111111111111",
+            amount: 5500n,
+            asset: "USDC",
+          },
         ],
       });
 
@@ -251,12 +305,19 @@ describe("Payroll Run Amendments Helper (#506)", () => {
         authorizer: AUTHORIZER,
         currentCommitments: BASE_COMMITMENTS,
         proposedCommitments: [
-          { recipient: "G_ALICE_ADDR_111111111111111111111111111111111111111111111", amount: 5500n, asset: "USDC" },
+          {
+            recipient: "G_ALICE_ADDR_111111111111111111111111111111111111111111111",
+            amount: 5500n,
+            asset: "USDC",
+          },
         ],
       });
 
       expect(() =>
-        authorizePayrollRunAmendment(amendment, "G_WRONG_AUTHORIZER_12345678901234567890123456789012345678901234")
+        authorizePayrollRunAmendment(
+          amendment,
+          "G_WRONG_AUTHORIZER_12345678901234567890123456789012345678901234"
+        )
       ).toThrow("Authorizer mismatch: only the designated authorizer can approve this amendment.");
     });
   });

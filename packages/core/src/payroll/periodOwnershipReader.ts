@@ -75,11 +75,19 @@ export type PeriodOwnershipErrorCode =
   | "REVOKED_OWNERSHIP";
 
 /** Exception thrown when ownership read fails. */
-export interface PeriodOwnershipError {
-  code: PeriodOwnershipErrorCode;
-  message: string;
-  periodId?: string;
-  timestamp: number;
+export class PeriodOwnershipError extends Error {
+  public readonly code: PeriodOwnershipErrorCode;
+  public readonly periodId?: string;
+  public readonly timestamp: number;
+
+  constructor(code: PeriodOwnershipErrorCode, message: string, periodId?: string) {
+    super(message);
+    this.name = "PeriodOwnershipError";
+    this.code = code;
+    this.periodId = periodId;
+    this.timestamp = Date.now();
+    Object.setPrototypeOf(this, PeriodOwnershipError.prototype);
+  }
 }
 
 function redactOwnerId(id: string): string {
@@ -130,29 +138,20 @@ export function readPeriodOwnership(
   ownership: PayrollPeriodOwnership,
   options: PeriodOwnershipReadOptions = {}
 ): PeriodOwnershipReadResult {
-  const {
-    includeAccessors = true,
-    includeConstraints = true,
-    validateAccess = true,
-  } = options;
+  const { includeAccessors = true, includeConstraints = true, validateAccess = true } = options;
 
   // Validate period exists
   if (!periodId || periodId.trim().length === 0) {
-    throw {
-      code: "INVALID_PERIOD_ID",
-      message: "Period ID must not be empty.",
-      timestamp: Date.now(),
-    } as PeriodOwnershipError;
+    throw new PeriodOwnershipError("INVALID_PERIOD_ID", "Period ID must not be empty.");
   }
 
   // Check for revoked ownership
   if (ownership.status === "revoked") {
-    throw {
-      code: "REVOKED_OWNERSHIP",
-      message: "This period's ownership has been revoked.",
-      periodId,
-      timestamp: Date.now(),
-    } as PeriodOwnershipError;
+    throw new PeriodOwnershipError(
+      "REVOKED_OWNERSHIP",
+      "This period's ownership has been revoked.",
+      periodId
+    );
   }
 
   // Build constraints if requested
@@ -210,10 +209,7 @@ export function canTransferOwnership(
 /**
  * Get the effective owner for authorization checks.
  */
-export function getEffectiveOwner(
-  ownership: PayrollPeriodOwnership,
-  accessors?: string[]
-): string {
+export function getEffectiveOwner(ownership: PayrollPeriodOwnership, accessors?: string[]): string {
   if (ownership.status === "active") {
     return ownership.ownerId;
   }
@@ -228,9 +224,7 @@ export function getEffectiveOwner(
 /**
  * Check if ownership status is valid for operations.
  */
-export function isOwnershipValid(
-  ownership: PayrollPeriodOwnership
-): boolean {
+export function isOwnershipValid(ownership: PayrollPeriodOwnership): boolean {
   return Boolean(
     ownership.status === "active" &&
     ownership.ownerId &&

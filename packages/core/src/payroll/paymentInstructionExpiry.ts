@@ -22,10 +22,7 @@ export interface PaymentInstructionEntry {
 
 /** Payment instruction expiry violation codes. */
 export type PaymentInstructionExpiryViolationCode =
-  | "INSTRUCTION_EXPIRED"
-  | "INVALID_EXPIRY_TIMESTAMP"
-  | "NO_EXPIRY_SET"
-  | "EXPIRY_IN_PAST";
+  "INSTRUCTION_EXPIRED" | "INVALID_EXPIRY_TIMESTAMP" | "NO_EXPIRY_SET" | "EXPIRY_IN_PAST";
 
 /** Structured expiry violation descriptor. */
 export interface PaymentInstructionExpiryViolation {
@@ -76,9 +73,7 @@ export function validatePaymentInstructionExpiry(
   } = options;
 
   const instrDisplay = entry.instructionId || "unknown";
-  const instrRedacted = shouldRedactId
-    ? redactInstrId(entry.instructionId)
-    : instrDisplay;
+  const instrRedacted = shouldRedactId ? redactInstrId(entry.instructionId) : instrDisplay;
 
   // Invalid expiry timestamp
   if (!Number.isFinite(entry.expiryTimestamp)) {

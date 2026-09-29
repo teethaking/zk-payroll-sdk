@@ -17,11 +17,7 @@ import { AmendmentPlan } from "./types";
 // ── Types ─────────────────────────────────────────────────────────────────────
 
 export type AmendmentAuthorizationStatus =
-  | "draft"
-  | "pending_authorization"
-  | "authorized"
-  | "rejected"
-  | "applied";
+  "draft" | "pending_authorization" | "authorized" | "rejected" | "applied";
 
 export interface PayrollRunCommitment {
   recipient: string;
@@ -170,9 +166,12 @@ export function inspectPayrollRunAmendment(input: {
   }
 
   const approvalRequired = totalDiffs > 0;
-  const displayPayrollId = input.payrollId ? redactIdentifier(input.payrollId, "PAYROLL") : "[UNSPECIFIED]";
+  const displayPayrollId = input.payrollId
+    ? redactIdentifier(input.payrollId, "PAYROLL")
+    : "[UNSPECIFIED]";
   const revStr = input.revision !== undefined ? ` (rev ${input.revision})` : "";
-  const assetsStr = affectedAssets.length > 0 ? ` across asset(s) ${affectedAssets.join(", ")}` : "";
+  const assetsStr =
+    affectedAssets.length > 0 ? ` across asset(s) ${affectedAssets.join(", ")}` : "";
 
   const redactedDescription = `Amendment${revStr} for payroll ${displayPayrollId}: ${addedCount} added, ${modifiedCount} modified, ${removedCount} removed${assetsStr}.`;
 
@@ -213,7 +212,9 @@ export function createPayrollRunAmendment(
   }
 
   if (input.reason !== undefined && !isValidReasonCode(input.reason)) {
-    throw new Error("Amendment reason must be a lowercase operational code without free-text details.");
+    throw new Error(
+      "Amendment reason must be a lowercase operational code without free-text details."
+    );
   }
 
   const currentCommitments = input.currentCommitments ?? [];
@@ -225,7 +226,9 @@ export function createPayrollRunAmendment(
   }) as AmendmentPlan["diffs"];
 
   if (diffs.length === 0 && !input.allowZeroDiff) {
-    throw new Error("No commitment differences detected between current and proposed payroll runs.");
+    throw new Error(
+      "No commitment differences detected between current and proposed payroll runs."
+    );
   }
 
   const summary = inspectPayrollRunAmendment({
@@ -310,7 +313,8 @@ export function validatePayrollRunAmendment(
     return {
       ok: false,
       code: "INVALID_REASON",
-      message: "Amendment reason must be a valid lowercase operational code (e.g. bonus_adjustment).",
+      message:
+        "Amendment reason must be a valid lowercase operational code (e.g. bonus_adjustment).",
       warnings,
     };
   }
@@ -390,7 +394,8 @@ export function validatePayrollRunAmendment(
   }
 
   // Check diff presence
-  const allowsZero = options.allowZeroDiff || ("allowZeroDiff" in target && Boolean(target.allowZeroDiff));
+  const allowsZero =
+    options.allowZeroDiff || ("allowZeroDiff" in target && Boolean(target.allowZeroDiff));
   if (diffs.length === 0 && !allowsZero) {
     return {
       ok: false,
@@ -433,7 +438,9 @@ export function authorizePayrollRunAmendment(
   }
 
   if (!authorizer || authorizer.trim() !== amendment.authorizer) {
-    throw new Error("Authorizer mismatch: only the designated authorizer can approve this amendment.");
+    throw new Error(
+      "Authorizer mismatch: only the designated authorizer can approve this amendment."
+    );
   }
 
   return {

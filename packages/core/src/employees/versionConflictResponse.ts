@@ -127,11 +127,7 @@ export function createEmployeeVersionConflictResponse(
     recommendedVersion,
   };
 
-  const suggestedAction = determineSuggestedAction(
-    conflictType,
-    resolved,
-    preferredStrategy
-  );
+  const suggestedAction = determineSuggestedAction(conflictType, resolved, preferredStrategy);
 
   return {
     resolved,
@@ -148,9 +144,7 @@ export function createEmployeeVersionConflictResponse(
   };
 }
 
-function getConflictSeverity(
-  conflictType: VersionConflictType
-): VersionConflictSeverity {
+function getConflictSeverity(conflictType: VersionConflictType): VersionConflictSeverity {
   switch (conflictType) {
     case "CONCURRENT_UPDATE":
       return "medium";
@@ -212,11 +206,7 @@ function buildPublicMessage(
   severity: VersionConflictSeverity
 ): string {
   const severityLabel =
-    severity === "critical"
-      ? "critical"
-      : severity === "high"
-        ? "significant"
-        : "minor";
+    severity === "critical" ? "critical" : severity === "high" ? "significant" : "minor";
   return `${severityLabel} version conflict detected for employee ${empRedacted}. Manual review may be required.`;
 }
 
@@ -228,10 +218,7 @@ function buildDetailedMessage(
   return `Version conflict (${conflictType}) detected for employee ${empId} with ${severity} severity. Review conflicting versions to determine correct state.`;
 }
 
-function getMergeRationale(
-  conflictType: VersionConflictType,
-  strategy: string
-): string {
+function getMergeRationale(conflictType: VersionConflictType, strategy: string): string {
   if (strategy === "TAKE_LATEST") {
     return "Using the most recent version based on timestamp.";
   }
@@ -247,9 +234,7 @@ function getMergeRationale(
 /**
  * Determine if a version conflict is resolvable automatically.
  */
-export function isVersionConflictResolvable(
-  conflictType: VersionConflictType
-): boolean {
+export function isVersionConflictResolvable(conflictType: VersionConflictType): boolean {
   // Some conflicts require manual review
   const requiresManualReview = ["INCOMPATIBLE_SCHEMA", "DATA_DIVERGENCE"];
   return !requiresManualReview.includes(conflictType);
@@ -258,11 +243,6 @@ export function isVersionConflictResolvable(
 /**
  * Check if a conflict represents a critical issue.
  */
-export function isVersionConflictCritical(
-  conflict: EmployeeVersionConflict
-): boolean {
-  return (
-    conflict.severity === "critical" ||
-    conflict.conflictType === "INCOMPATIBLE_SCHEMA"
-  );
+export function isVersionConflictCritical(conflict: EmployeeVersionConflict): boolean {
+  return conflict.severity === "critical" || conflict.conflictType === "INCOMPATIBLE_SCHEMA";
 }

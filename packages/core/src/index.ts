@@ -227,8 +227,8 @@ export * from "./compliance";
 // ── Privacy & Safe Credential Handling ─────────────────────────────────────
 export * from "./privacy";
 
-// ── Payroll Recipient Lock Status Reader (#512) ─────────────────────────────
-export * from "./payroll/recipientLockStatus";
+// ── Proof Artifact Lifecycle ────────────────────────────────────────────────
+export * from "./artifacts";
 
-// ── SDK Blocked Execution Diagnostics (#605) ─────────────────────────────
-export * from "./payroll/blockedExecutionDiagnostics";
+// ── Payroll Calendar & Overlap Detection ────────────────────────────────────
+export * from "./payroll/calendarOverlap";
